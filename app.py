@@ -1,7 +1,4 @@
 
-
-# ================== INSTALL ==================
-!lsof -i:8501
 # ================== IMPORT ==================
 
 import subprocess, time, os
@@ -238,6 +235,4 @@ subprocess.Popen(["streamlit","run","app.py","--server.port","8501"])
 
 time.sleep(6)
 # ১. আগে সার্ভার ব্যাকগ্রাউন্ডে চালু করুন
-!nohup streamlit run app.py --server.port 8501 &
-
-
+!nohup streamlit run app.py --server.port 8
