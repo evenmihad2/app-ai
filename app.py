@@ -33,6 +33,9 @@ def add_indicators(df):
     df['Low'] = pd.to_numeric(df['Low'
 st.set_page_config(layout="wide")
 st.title("🚀 ULTIMATE NEXT CANDLE AI")
+#================= File Upload =================
+file = st.file_uploader("Upload CSV / Excel / Chart Image", type=["csv","xlsx","xls","jpg","jpeg","png"])
+
 
 mode = st.selectbox("Select Mode", ["Live Market","Upload CSV","Upload Image"])
 
