@@ -226,10 +226,3 @@ st.title("🚀 Candle Predictor")
 
 with open("app.py","w") as f:
     f.write(app_code)
-
-
-'''
-# ================== RUN STREAMLIT ==================
-subprocess.Popen(["streamlit","run","app.py","--server.port","8501"])
-
-time.sleep(6)
