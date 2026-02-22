@@ -226,3 +226,4 @@ st.title("🚀 Candle Predictor")
 
 with open("app.py","w") as f:
     f.write(app_code)
+    '''
