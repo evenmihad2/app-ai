@@ -1,7 +1,6 @@
 
 
 # ================== INSTALL ==================
-!pip install streamlit pygithub yfinance ta scikit-learn pandas numpy plotly opencv-python --quiet
 !streamlit run app.py &
 !lsof -i:8501
 # ================== IMPORT ==================
