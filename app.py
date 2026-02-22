@@ -234,5 +234,4 @@ with open("app.py","w") as f:
 subprocess.Popen(["streamlit","run","app.py","--server.port","8501"])
 
 time.sleep(6)
-# ১. আগে সার্ভার ব্যাকগ্রাউন্ডে চালু করুন
-!nohup streamlit run app.py --server.port 8
+
