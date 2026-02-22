@@ -1,4 +1,4 @@
-
+ 
 
 
 # ================== STREAMLIT APP ==================
@@ -217,7 +217,6 @@ def run_live():
 
 run_live()
 
-subprocess.Popen(["streamlit","run","app.py","--server.port","8501"])
 
 time.sleep(6)
 app_code = """
