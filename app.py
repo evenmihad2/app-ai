@@ -1,7 +1,4 @@
 
-# ================== IMPORT ==================
-
-import subprocess, time, os
 
 
 # ================== STREAMLIT APP ==================
@@ -237,4 +234,3 @@ with open("app.py","w") as f:
 subprocess.Popen(["streamlit","run","app.py","--server.port","8501"])
 
 time.sleep(6)
-
