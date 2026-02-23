@@ -1,7 +1,5 @@
 # =======================  Streamlit + Localtunnel =========================
 
-!npm install -g localtunnel
-
 import subprocess, time, os
 import pandas as pd
 import numpy as np
