@@ -1,20 +1,19 @@
-# =======================  Streamlit + Localtunnel =========================
+# ======================= STREAMLIT + GITHUB DEPLOY READY =========================
+# ================== INSTALL ==================
+# Requirements.txt ব্যবহার করলে Streamlit Cloud auto install করবে
+"""
+streamlit
+pandas
+numpy
+ta
+yfinance
+opencv-python
+plotly
+scikit-learn
+requests
+"""
 
-import subprocess, time, os
-import pandas as pd
-import numpy as np
-import streamlit as st
-import yfinance as yf
-import cv2
-import plotly.graph_objects as go
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.model_selection import train_test_split
-from sklearn.metrics import accuracy_score
-import sqlite3
-import requests
-
-# ================== STREAMLIT APP ==================
-app_code = """
+# ================== IMPORT ==================
 import streamlit as st
 import pandas as pd
 import numpy as np
@@ -31,25 +30,22 @@ import time
 
 DB = "market_data.db"
 
+# ================== STREAMLIT UI ==================
 st.set_page_config(layout="wide")
-st.title("🚀 ULTIMATE NEXT CANDLE AI")
+st.title("🚀 ULTIMATE NEXT CANDLE AI (GitHub/Streamlit)")
 
 mode = st.selectbox("Select Mode", ["Live Market","Upload CSV","Upload Image"])
 
 # ================= FEATURE FUNCTION =================
 def add_features(df):
-    df['Close'] = pd.to_numeric(df['Close'], errors='coerce')
-    df['Open'] = pd.to_numeric(df['Open'], errors='coerce')
-    df['High'] = pd.to_numeric(df['High'], errors='coerce')
-    df['Low'] = pd.to_numeric(df['Low'], errors='coerce')
-    df['EMA9'] = ta.trend.ema_indicator(df['Close'].values.flatten(), 9)
-    df['SMA20'] = ta.trend.sma_indicator(df['Close'].values.flatten(), 20)
-    df['EMA21'] = ta.trend.ema_indicator(df['Close'].values.flatten(),21)
-    df['RSI'] = ta.momentum.rsi(df['Close'].values.flatten(),14)
-    df['MACD'] = ta.trend.MACD(df['Close'].values.flatten()).macd()
-    df['ATR'] = ta.volatility.average_true_range(df['High'].values.flatten(),
-                                                 df['Low'].values.flatten(),
-                                                 df['Close'].values.flatten(),14)
+    for col in ['Close','Open','High','Low']:
+        df[col] = pd.to_numeric(df[col], errors='coerce')
+    df['EMA9'] = ta.trend.ema_indicator(df['Close'], 9)
+    df['SMA20'] = ta.trend.sma_indicator(df['Close'], 20)
+    df['EMA21'] = ta.trend.ema_indicator(df['Close'],21)
+    df['RSI'] = ta.momentum.rsi(df['Close'],14)
+    df['MACD'] = ta.trend.MACD(df['Close']).macd()
+    df['ATR'] = ta.volatility.average_true_range(df['High'], df['Low'], df['Close'],14)
     df['Body'] = df['Close'] - df['Open']
     df.dropna(inplace=True)
     return df
@@ -97,7 +93,7 @@ elif mode == "Upload CSV":
     file = st.file_uploader("Upload CSV", type=["csv"])
     if file:
         df = pd.read_csv(file)
-        df = df[['Open','High','Low','Close','Volume']]
+        df = df[['Open','High','Low','Close','Volume']].dropna()
         df = add_features(df)
         acc, prob = train_predict(df)
         signal = "BUY 🔥" if prob>0.6 else "SELL ❌" if prob<0.4 else "HOLD ⚠️"
@@ -140,9 +136,9 @@ def init_db():
     conn.commit()
     conn.close()
 
-# ================= FETCH LIVE DATA =================
-def fetch_live_data():
-    url = f"https://api.binance.com/api/v3/klines?symbol=BTCUSDT&interval=1m&limit=100"
+# ================= LIVE FETCH + MODEL =================
+def fetch_live_data(symbol="BTCUSDT", interval="1m"):
+    url = f"https://api.binance.com/api/v3/klines?symbol={symbol}&interval={interval}&limit=100"
     data = requests.get(url).json()
     df = pd.DataFrame(data, columns=[
         'time','open','high','low','close','volume','ignore1','ignore2','ignore3','ignore4','ignore5','ignore6'
@@ -157,14 +153,11 @@ def store_data(df):
     df.to_sql("candles", conn, if_exists="replace", index=False)
     conn.close()
 
-# ================= TRAIN MODEL =================
 def train_live_model(df):
-    df['EMA9'] = ta.trend.ema_indicator(df['close'].values.flatten(), 9)
-    df['RSI'] = ta.momentum.rsi(df['close'].values.flatten(),14)
-    df['MACD'] = ta.trend.MACD(df['close'].values.flatten()).macd()
-    df['ATR'] = ta.volatility.average_true_range(df['high'].values.flatten(),
-                                                 df['low'].values.flatten(),
-                                                 df['close'].values.flatten(),14)
+    df['EMA9'] = ta.trend.ema_indicator(df['close'], 9)
+    df['RSI'] = ta.momentum.rsi(df['close'],14)
+    df['MACD'] = ta.trend.MACD(df['close']).macd()
+    df['ATR'] = ta.volatility.average_true_range(df['high'], df['low'], df['close'],14)
     df['target'] = np.where(df['close'].shift(-1) > df['close'],1,0)
     X = df[['EMA9','RSI','MACD','ATR']]
     y = df['target']
@@ -185,37 +178,5 @@ def run_live():
         print(f"Signal: {signal} | Confidence: {prob*100:.2f}%")
         time.sleep(60)
 
-# Uncomment below line to run live in background
+# Uncomment below to run live in server background
 # run_live()
-"""
-
-# Save Streamlit app
-with open("app.py", "w") as f:
-    f.write(app_code)
-
-# Run Streamlit server in background
-subprocess.Popen(
-    ["streamlit", "run", "app.py", "--server.port=8501"],
-    stdout=subprocess.PIPE,
-    stderr=subprocess.PIPE
-)
-
-time.sleep(5)
-
-# Start localtunnel
-lt_process = subprocess.Popen(
-    ["lt", "--port", "8501", "--subdomain=myapp", "--auth", "user:1234"],
-    stdout=subprocess.PIPE,
-    stderr=subprocess.PIPE,
-    text=True
-)
-
-time.sleep(5)
-
-# Public URL capture
-while True:
-    line = lt_process.stdout.readline()
-    if "https://" in line.lower():
-        print("🌐 Open this URL in your Kodular app or browser:")
-        print(line.strip())
-        break
