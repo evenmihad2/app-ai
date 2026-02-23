@@ -4,7 +4,6 @@ import subprocess, time, os
 import pandas as pd
 import numpy as np
 import streamlit as st
-import ta
 import yfinance as yf
 import cv2
 import plotly.graph_objects as go
