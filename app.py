@@ -1,5 +1,5 @@
-# ======================= Colab + Streamlit + Localtunnel =========================
-!pip install streamlit plotly pandas numpy scikit-learn ta opencv-python yfinance --quiet
+# =======================  Streamlit + Localtunnel =========================
+
 !npm install -g localtunnel
 
 import subprocess, time, os
